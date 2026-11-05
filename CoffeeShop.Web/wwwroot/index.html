@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Coffee Rush</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/lib/signalr.min.js"></script>
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">☕</span> The Coffee Rush</div>
+      <span id="connection-status" class="connection-status">Connecting…</span>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow">A tiny coffee shop. A big queue.</p>
+          <h1 id="page-title">How fast can your baristas work?</h1>
+          <p>Send orders to the counter, then watch baristas prepare them. Ordering is quick; making each coffee takes three seconds.</p>
+          <div class="hero-note"><span aria-hidden="true">↗</span> Add more worker containers to serve the same queue faster.</div>
+        </div>
+        <div class="cup-art" aria-hidden="true"><div class="steam steam-one"></div><div class="steam steam-two"></div><div class="steam steam-three"></div><div class="cup"><div class="coffee"></div></div><div class="saucer"></div></div>
+      </section>
+
+      <div class="dashboard-grid">
+        <section class="panel order-panel" aria-labelledby="order-heading">
+          <div class="panel-heading"><div><p class="eyebrow">The counter</p><h2 id="order-heading">Place an order</h2></div><span class="panel-icon" aria-hidden="true">✦</span></div>
+          <label for="drink">Coffee</label>
+          <select id="drink" name="drink">
+            <option>Espresso</option>
+            <option selected>Latte</option>
+            <option>Cappuccino</option>
+            <option>Flat White</option>
+          </select>
+          <p class="control-label">How many?</p>
+          <div class="quick-orders">
+            <button type="button" class="order-button" data-count="1">1 order</button>
+            <button type="button" class="order-button" data-count="10">10 orders</button>
+            <button type="button" class="order-button" data-count="30">30 orders</button>
+          </div>
+          <form id="custom-order-form" class="custom-order-form">
+            <label class="sr-only" for="custom-count">Custom number of orders</label>
+            <input id="custom-count" name="count" type="number" min="1" max="100" value="5" required>
+            <button type="submit" class="primary-button">Place custom order <span aria-hidden="true">→</span></button>
+          </form>
+          <p id="order-message" class="message" role="status" aria-live="polite">Each order gets a random customer name and a unique ID.</p>
+        </section>
+
+        <section class="panel stats-panel" aria-labelledby="stats-heading">
+          <div class="panel-heading"><div><p class="eyebrow">Live experiment</p><h2 id="stats-heading">Order board</h2></div><span class="live-pill"><span class="live-dot"></span> Live</span></div>
+          <div class="stats-grid">
+            <div class="stat stat-placed"><span class="stat-label">Placed</span><strong id="placed">0</strong></div>
+            <div class="stat stat-completed"><span class="stat-label">Completed</span><strong id="completed">0</strong></div>
+            <div class="stat stat-outstanding"><span class="stat-label">Outstanding</span><strong id="outstanding">0</strong></div>
+          </div>
+          <div class="progress-head"><span>Orders ready</span><span id="progress-text">0%</span></div>
+          <div class="progress-track" role="progressbar" aria-label="Orders completed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress-fill" class="progress-fill"></div></div>
+          <p id="experiment-state" class="experiment-state">Place an order to begin an experiment.</p>
+          <div class="reset-row"><button id="reset-button" type="button" class="text-button">↺ Reset &amp; clear queue</button><span id="reset-hint">Waiting orders are removed. Coffees already being made may finish.</span></div>
+        </section>
+      </div>
+
+      <section class="panel activity-panel" aria-labelledby="activity-heading">
+        <div class="panel-heading"><div><p class="eyebrow">Fresh from the machine</p><h2 id="activity-heading">Completed orders</h2></div><span class="feed-caption">Latest 10</span></div>
+        <ol id="activity-list" class="activity-list"><li class="empty-activity">No coffees made yet. The baristas will appear here.</li></ol>
+      </section>
+
+      <aside class="lesson-note"><span aria-hidden="true">💡</span><p><strong>Watch the two journeys:</strong> RabbitMQ holds orders for available baristas. SignalR carries completed-order callbacks to this page.</p></aside>
+    </main>
+
+    <footer>Made for the Coffee Rush workshop · One shared queue, any number of baristas</footer>
+  </div>
+</body>
+</html>

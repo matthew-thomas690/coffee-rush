@@ -1,0 +1,45 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4-management
+    environment:
+      RABBITMQ_DEFAULT_USER: coffee
+      RABBITMQ_DEFAULT_PASS: coffee
+    ports:
+      - "127.0.0.1:15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  web:
+    image: coffee-shop-web
+    build:
+      context: .
+      dockerfile: CoffeeShop.Web/Dockerfile
+    environment:
+      RabbitMq__HostName: rabbitmq
+      RabbitMq__UserName: coffee
+      RabbitMq__Password: coffee
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  worker:
+    profiles: [baristas]
+    image: coffee-shop-worker
+    build:
+      context: .
+      dockerfile: CoffeeShop.Worker/Dockerfile
+    environment:
+      RabbitMq__HostName: rabbitmq
+      RabbitMq__UserName: coffee
+      RabbitMq__Password: coffee
+      Web__HubUrl: http://web:8080/hubs/completions
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      web:
+        condition: service_started
